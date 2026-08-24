@@ -13,6 +13,10 @@ const teacherSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        verified: {
+            type: Boolean,
+            default: false,
+        },
         fullname: {
             type: String,
             required: true
@@ -57,6 +61,7 @@ const teacherSchema = new mongoose.Schema(
         },
         totalStudents: {
             type: Number,
+            default: 0,
         },
         active: {
             type: Boolean,
