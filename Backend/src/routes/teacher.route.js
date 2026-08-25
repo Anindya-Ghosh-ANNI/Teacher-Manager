@@ -30,20 +30,20 @@ router.get("/register/verifyEmail", async (req, res, next)=>{
 router.post("/register", async (req, res, next)=>{
     try {
         // Extracting the data from frontend
-        const {email, password, fullname, nickname, about, photo, address, phone, totalSubjects, subjects, mode, totalStudents, active} = req.body;
+        const {email, password, fullname, nickname, about, photo, gender, address, phone, totalSubjects, subjects, mode} = req.body;
 
         // Hashing the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Creating the teacher 
-        const teacher = await Teacher.create({email, password: hashedPassword, fullname, nickname, about, photo, address, phone, totalSubjects, subjects, mode, totalStudents, active});
+        const teacher = await Teacher.create({email, password: hashedPassword, fullname, nickname, about, photo, gender, address, phone, totalSubjects, subjects, mode});
 
         // Login the user
         const token = jwt.sign({teacherId: teacher._id}, process.env.JWT_SECRET);
         res.cookie("token", token);
 
         res.status(201).send({
-            message: "New Teacher created. And login successfull.",
+            message: "Backend :: New Teacher created. And login successfull.",
             teacher
         });
     } 

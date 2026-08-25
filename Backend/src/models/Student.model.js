@@ -53,8 +53,8 @@ const studentSchema = new mongoose.Schema(
         },
         paymentStyle: {
             type: String,
-            enum: ["Advance", "Arrears"],
-            default: "Arrears",
+            enum: ["advance", "arrears"],
+            default: "arrears",
         },
         feeAmount: {
             type: Number,

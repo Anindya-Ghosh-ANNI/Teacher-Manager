@@ -56,8 +56,8 @@ const teacherSchema = new mongoose.Schema(
         mode: {
             type: String,
             required: true,
-            enum: ["Online", "Offline", "Hybrid"],
-            default: "Offline",
+            enum: ["online", "offline", "hybrid"],
+            default: "offline",
         },
         totalStudents: {
             type: Number,

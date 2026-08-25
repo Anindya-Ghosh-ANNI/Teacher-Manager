@@ -22,7 +22,7 @@ function App() {
         <Route path="/teacher/login" element={<TeacherLogin />} />
         <Route path="/teacher/register" element={<TeacherRegister />} />
 
-        {/* <Route path="/teacher/home" element={<TeacherHome />} /> */}
+        <Route path="/teacher/home" element={<TeacherHome />} />
 
 
         <Route path="*" element={<UnderConstruction />} />

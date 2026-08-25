@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 function TeacherRegister() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -7,20 +9,20 @@ function TeacherRegister() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    verified: "",
     fullname: "",
     nickname: "",
     about: "",
     photo: "",  // ****
-    gender: "",
+    gender: "male",
     address: "",
     phone: "",
     totalSubjects: "",
     subjects: [],
-    mode: "",
+    mode: "offline",
   })
   const [pass2, setPass2] = useState("");
   let content;
+  const navigate = useNavigate();
 
   useEffect(()=>{
     console.log("Number of subjects changed.");
@@ -91,11 +93,34 @@ function TeacherRegister() {
     }
   }
   
-  const handleSubmit = (e)=>{
-    e.preventDefault();
-    console.log("Submit button clicked");
+  const handleSubmit = async (e)=>{
+    try {
+      e.preventDefault();
+      setError("");
 
+      const response = await fetch(`${API_URL}/teacher/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      })
 
+      const data = await response.json();      
+
+      if(!response.ok){
+        throw new Error(data.message || "Something went wrong.")
+      }
+      
+      console.log(data)
+      toast.success("Teacher created successfully.")
+      setError("");
+      navigate("/teacher/home");
+    }
+    catch (error) {
+      console.log(error);
+      setError(error.message);
+    }
   }
 
 
@@ -166,7 +191,6 @@ function TeacherRegister() {
           <div className="space-y-4">
 
             <input
-              type="password"
               placeholder="Set password"
               name="password"
               value={formData.password}
@@ -272,9 +296,9 @@ function TeacherRegister() {
                   <input
                     type="radio"
                     name="gender"
-                    value={gender}
+                    value={gender.toLowerCase()}
                     required={true}
-                    checked={formData.gender === gender}
+                    checked={formData.gender === gender.toLowerCase()}
                     onChange={handleChange}
                     className="accent-blue-600"
                   />
@@ -331,8 +355,8 @@ function TeacherRegister() {
                       type="radio"
                       name="mode"
                       required={true}
-                      value={mode}
-                      checked={formData.mode === mode}
+                      value={mode.toLowerCase()}
+                      checked={formData.mode === mode.toLowerCase()}
                       onChange={handleChange}
                       className="accent-blue-600"
                     />
@@ -367,6 +391,12 @@ function TeacherRegister() {
               )
             )}
           </div>
+
+          {error && (
+            <p className="text-sm text-red-500">
+              {error}
+            </p>
+          )}
 
           {/* Submit */}
           <button
