@@ -7,6 +7,7 @@ import TeacherRegister from "./pages/teacher/TeacherRegister";
 import TeacherHome from "./pages/teacher/TeacherHome";
 
 import TSBtn from "./components/TSBtn";
+import StudentCard from "./components/StudentCard";
 
 export {
   Home,
@@ -16,5 +17,7 @@ export {
   TeacherLogin,
   TeacherRegister,
   TeacherHome,
+
   TSBtn,
+  StudentCard,
 };

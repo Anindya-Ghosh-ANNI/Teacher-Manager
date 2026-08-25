@@ -3,6 +3,7 @@ import Teacher from "../models/Teacher.model.js";
 import bcrypt from "bcrypt"
 import authMiddleware from "../middleware/auth.middleware.js";
 import jwt from "jsonwebtoken";
+import Student from "../models/Student.model.js"
 
 const router = express.Router()
 
@@ -163,9 +164,12 @@ router.delete("/delete/:teacherId", authMiddleware, async (req, res, next)=>{
 })
 
 // Get Active Students by teacher
-router.get("/find/active/:teacherId", authMiddleware, async (req, res, next)=>{
+router.get("/find/active", authMiddleware, async (req, res, next)=>{
     try {
-        const teacher = await Teacher.findById(req.params.teacherId);
+        const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+        const teacherId = decoded.teacherId;
+        const teacher = await Teacher.findById(teacherId);
+        
         if(!teacher){
             const error = new Error("Invalid Teacher Id !!");
             error.statusCode = 404;
@@ -173,7 +177,7 @@ router.get("/find/active/:teacherId", authMiddleware, async (req, res, next)=>{
         }
         
         const students = await Student.find({
-            teacherId: req.params.teacherId,
+            teacherId: teacherId,
             active: true,
         })
         

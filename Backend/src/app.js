@@ -13,14 +13,18 @@ import errorResponse from "./middleware/error.middleware.js";
 const app = express();
 
 // 2. Parser
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 // 3. General Middlewares
-app.use(cors({
-    origin: "http://localhost:5173"
-}))
 
 app.use(successResponse);
 

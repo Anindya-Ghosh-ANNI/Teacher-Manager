@@ -43,13 +43,12 @@ const studentSchema = new mongoose.Schema(
         password: {
             type: String,
         },
+        verified: {
+            type: Boolean,
+            default: false,
+        },
         photo: {
             type: String
-        },
-        teacherId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Teacher",
-            required: true,
         },
         paymentStyle: {
             type: String,
@@ -59,7 +58,12 @@ const studentSchema = new mongoose.Schema(
         feeAmount: {
             type: Number,
             default: 500,
-        }
+        },
+        teacherId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Teacher",
+            required: true,
+        },
     },
     {timestamps: true}
 )

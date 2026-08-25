@@ -18,9 +18,10 @@ function TeacherLogin() {
   
       const response = await fetch(`${API_URL}/teacher/login`, {
         method: "POST",
-        headers: {
+        headers: {    
           "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({email, password})
       });
       
