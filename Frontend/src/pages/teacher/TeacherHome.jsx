@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react'
-import {StudentCard} from "../../index.js"
+import {AddStudentForm, StudentCard, StudentDetail} from "../../index.js"
 
 function TeacherHome() {
   const [student, setStudent] = useState([])
   const [page, setPage] = useState("empty")
   const [error, setError] = useState("")
-  const [clicked, setClicked] = useState(true);
+  const [reload, setReload] = useState(true);
   const API_URL = import.meta.env.VITE_API_URL;
-  const [formData, setFormData] = useState({
-    
-  })
+  const [showstudentForm, setShowStudentForm] = useState(false);
+  const [studentId, setStudentId] = useState("");
 
   useEffect( ()=>{
     ;(async ()=>{
       try{
-        if(!clicked) return;
+        if(!reload) return;
         setError("");
         
         // Fetching Students 
@@ -29,7 +28,7 @@ function TeacherHome() {
           throw new Error(data.message || "Failed to fetch students.");
         }
 
-        console.log(data);
+        console.log("Students: ", data);
         setStudent(data.data);        
          
         if(data.data.length) setPage("success");
@@ -41,28 +40,11 @@ function TeacherHome() {
         setError(error.message)
       }
       finally{
-        setClicked(false);
+        setReload(false);
       }
     })()
-  }, [clicked])
+  }, [reload])
 
-  const addStudent = async ()=>{
-    try {
-      setError("");
-
-      fetch(`${API_URL}student/create`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify()
-      })
-    } 
-    catch (error) {
-      
-    }
-  }
 
   let content;
 
@@ -86,7 +68,7 @@ function TeacherHome() {
             </p>
 
             <button
-              onClick={() => setClicked(true)}
+              onClick={() => setReload(true)}
               className="mt-6 w-full rounded-lg bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-700 active:scale-[0.98]"
             >
               Try Again
@@ -101,7 +83,7 @@ function TeacherHome() {
     content = (
       <>
         <div className="flex min-h-[70vh] items-center justify-center px-6">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm relative">
 
             {/* Icon */}
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
@@ -132,11 +114,18 @@ function TeacherHome() {
             </p>
 
             <button
-              onClick={addStudent}
+              onClick={()=> setShowStudentForm(true)}
               className="mt-6 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 active:scale-95"
             >
               Add Student
             </button>
+
+            {showstudentForm && 
+              <AddStudentForm 
+                setShowStudentForm={setShowStudentForm}
+                setReload={setReload}
+              />
+            }
 
           </div>
         </div>
@@ -147,7 +136,7 @@ function TeacherHome() {
     content = (
       <>
         <div className="min-h-screen bg-slate-50 px-6 py-8">
-          <div className="mx-auto max-w-7xl">
+          <div className="relative mx-auto max-w-7xl">
 
             {/* Header */}
             <div className="mb-8">
@@ -172,19 +161,42 @@ function TeacherHome() {
 
             {/* Students */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {
-                student.map((ele, idx) => {
-                  return (
-                    <StudentCard
-                      key={ele._id}
-                      name={ele.name}
-                    />
-                  )
-                })
-              }
+              {student.map((ele) => {
+                return (
+                  <div key={ele._id}
+                    onClick={()=>setStudentId(ele._id)}
+                  >
+                    <StudentCard  name={ele.name}/>
+
+                    {/* Student Detail */}
+                    {studentId===ele._id && 
+                      <StudentDetail id={studentId} data={student} 
+                         className="absolute top-full left-0 z-30 mt-2 w-full"
+                      />
+                    }
+                  </div>
+                )
+              })}
             </div>
 
-          </div>
+            
+            {/* Add Student Form */}
+            {showstudentForm && 
+              <AddStudentForm 
+                setShowStudentForm={setShowStudentForm}
+                setReload={setReload}
+              />
+            }
+            
+            {/* Add Student Buttom */}
+            <button
+              onClick={()=> setShowStudentForm(true)}
+              className="fixed bottom-6 right-6 z-40 rounded-full bg-green-600 px-6 py-3 font-medium text-white shadow-lg transition hover:bg-green-400 active:scale-95"
+            >
+              + Add Student
+            </button>
+
+          </div>          
         </div>
       </>
     )

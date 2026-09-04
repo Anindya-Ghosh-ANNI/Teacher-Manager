@@ -141,17 +141,5 @@ router.delete("/delete/:id", authMiddleware, async (req, res, next)=>{
     }
 })
 
-// Get all Teacher
-router.get("/getAllActive", async (req, res, next)=>{
-    try {
-        const teacher = await Teacher.find({
-            active: true,
-        })
-
-        res.success(teacher);
-    } catch (error) {
-        next(error);
-    }
-})
 
 export default router;

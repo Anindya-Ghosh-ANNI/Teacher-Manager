@@ -8,6 +8,8 @@ import TeacherHome from "./pages/teacher/TeacherHome";
 
 import TSBtn from "./components/TSBtn";
 import StudentCard from "./components/StudentCard";
+import AddStudentForm from "./components/AddStudentForm";
+import StudentDetail from "./components/StudentDetail";
 
 export {
   Home,
@@ -20,4 +22,6 @@ export {
 
   TSBtn,
   StudentCard,
+  AddStudentForm,
+  StudentDetail,
 };

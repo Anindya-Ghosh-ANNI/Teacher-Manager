@@ -210,5 +210,33 @@ router.get("/find/deactive/:teacherId", authMiddleware, async (req, res, next)=>
     }
 })
 
+// Get logged teacher details from jwt
+router.get("/getTeacher", authMiddleware, async (req, res)=>{
+    try {
+        const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+        const teacherId = decoded.teacherId;
+
+        const teacher = await Teacher.findById(teacherId);
+
+        res.success(teacher, "Teacher fetched successfully.");
+    } 
+    catch (error) {
+        next(error)
+    }
+})
+
+// Get all Teachers
+router.get("/getAllActive", async (req, res, next)=>{
+    try {
+        const teacher = await Teacher.find({
+            active: true,
+        })
+
+        res.success(teacher);
+    } catch (error) {
+        next(error);
+    }
+})
+
 
 export default router;

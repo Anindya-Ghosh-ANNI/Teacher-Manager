@@ -80,17 +80,25 @@ function TeacherRegister() {
   }
 
   const handleChange = (e)=>{
-    try {
       const {name, value} = e.target;
   
       setFormData({
         ...formData,
         [name]: value
       })
-    } 
-    catch (error) {
-      console.log(error);
-    }
+  }
+
+  const handleSubjectChange = (index, value)=> {
+    formData.subjects[index]
+    setFormData((prev)=>{
+      const s = [...prev.subjects];
+      s[index] = value;
+      
+      return{
+        ...prev,
+        subjects: s,
+      }
+    })
   }
   
   const handleSubmit = async (e)=>{
@@ -103,7 +111,8 @@ function TeacherRegister() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        credentials: "include",
       })
 
       const data = await response.json();      
@@ -384,7 +393,9 @@ function TeacherRegister() {
                 <input
                   key={index}
                   type="text"
-                  
+                  required
+                  value={formData.subjects[index] || ""}
+                  onChange={(e)=> handleSubjectChange(index, e.target.value)}
                   placeholder={`Subject ${index + 1}`}
                   className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 />

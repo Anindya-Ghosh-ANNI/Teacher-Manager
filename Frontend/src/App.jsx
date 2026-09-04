@@ -6,6 +6,7 @@ import {
   TeacherRegister,
   TeacherHome,
   Teacher_LoginOrRegister,
+  AddStudentForm,
 } from "./index";
 
 import UnderConstruction from "./pages/UnderConstruction";
@@ -14,9 +15,10 @@ function App() {
   return (
     <>
       <Routes>
+        {/* Home route */}
         <Route path="/" element={<Home />} />
 
-        {/* <Route path="/student" element={<Student />} /> */}
+        {/* Teacher routes */}
         <Route path="/teacher/loginOrRegister" element={<Teacher_LoginOrRegister />} />
 
         <Route path="/teacher/login" element={<TeacherLogin />} />
@@ -24,7 +26,11 @@ function App() {
 
         <Route path="/teacher/home" element={<TeacherHome />} />
 
+        <Route path="/test" element={<AddStudentForm />} />
+        {/* Student routes */}
+        {/* <Route path="/student" element={<Student />} /> */}
 
+        {/* All other routes */}
         <Route path="*" element={<UnderConstruction />} />
       </Routes>
     </>
