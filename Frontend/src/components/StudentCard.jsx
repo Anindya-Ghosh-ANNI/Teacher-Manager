@@ -1,5 +1,5 @@
 
-function StudentCard({name}) {
+function StudentCard({name, studentIdx, setStudentIdx}) {
   return (
     <>
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
@@ -22,7 +22,9 @@ function StudentCard({name}) {
             </div>
 
             <div className="mt-5 border-t border-slate-100 pt-4">
-                <button className="w-full rounded-lg bg-slate-800 py-2 text-sm font-medium text-white transition hover:bg-slate-700">
+                <button 
+                    onClick={()=>setStudentIdx(studentIdx)}
+                    className="w-full rounded-lg bg-slate-800 py-2 text-sm font-medium text-white transition hover:bg-slate-700">
                 View Details
                 </button>
             </div>

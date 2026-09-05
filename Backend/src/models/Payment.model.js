@@ -12,18 +12,20 @@ const paymentSchema = new mongoose.Schema(
             required: true,
         },
         paymentDate: {
-            type: Number,
+            type: Date,
             default: Date.now(),
         },
-        paidMonth: {
+        paymentFrom: {
+            type: Date,
+            required: true,
+        },
+        paymentMonths: {
             type: Number,
-            min: 1,
-            max: 12,
             required: true,
         }
     },
     {timestamps: true},
 )
 
-const Student = mongoose.model("Student", paymentSchema);
-export default Student;
+const Payment = mongoose.model("Payment", paymentSchema);
+export default Payment;

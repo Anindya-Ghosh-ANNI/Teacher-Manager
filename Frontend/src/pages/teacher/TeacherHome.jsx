@@ -3,18 +3,20 @@ import {AddStudentForm, StudentCard, StudentDetail} from "../../index.js"
 
 function TeacherHome() {
   const [student, setStudent] = useState([])
+  const [teacherData, setTeacherData] = useState({})
   const [page, setPage] = useState("empty")
   const [error, setError] = useState("")
   const [reload, setReload] = useState(true);
   const API_URL = import.meta.env.VITE_API_URL;
   const [showstudentForm, setShowStudentForm] = useState(false);
-  const [studentId, setStudentId] = useState("");
+  const [studentIdx, setStudentIdx] = useState("");
 
   useEffect( ()=>{
     ;(async ()=>{
       try{
         if(!reload) return;
         setError("");
+
         
         // Fetching Students 
         const response = await fetch(`${API_URL}/teacher/find/active`, {
@@ -27,13 +29,27 @@ function TeacherHome() {
         if(!response.ok){
           throw new Error(data.message || "Failed to fetch students.");
         }
-
+        
         console.log("Students: ", data);
         setStudent(data.data);        
-         
+        
         if(data.data.length) setPage("success");
         else setPage("empty");
-      }
+
+        // Fetching Teacher
+        const teacherResponse = await fetch(`${API_URL}/teacher/getTeacher`, {
+          method: "GET",
+          credentials: "include"
+        });
+        const data2 = await teacherResponse.json();
+
+        if(!teacherResponse){
+          throw new Error(data.message || "Failed to fetch teacher.")
+        }
+
+        console.log("Teacher: ", data2.data);
+        setTeacherData(data2.data);
+      }                         
       catch(error){
         setPage("error");
         console.log(error.message);
@@ -136,7 +152,7 @@ function TeacherHome() {
     content = (
       <>
         <div className="min-h-screen bg-slate-50 px-6 py-8">
-          <div className="relative mx-auto max-w-7xl">
+          <div className=" mx-auto max-w-7xl">
 
             {/* Header */}
             <div className="mb-8">
@@ -161,21 +177,22 @@ function TeacherHome() {
 
             {/* Students */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {student.map((ele) => {
+              {student.map((ele, idx) => {
                 return (
-                  <div key={ele._id}
-                    onClick={()=>setStudentId(ele._id)}
-                  >
-                    <StudentCard  name={ele.name}/>
+                  <div key={ele._id}>
+
+                    {/* Individual Student Card */}
+                    <StudentCard  name={ele.name} studentIdx={idx} setStudentIdx={setStudentIdx} />
 
                     {/* Student Detail */}
-                    {studentId===ele._id && 
-                      <StudentDetail id={studentId} data={student} 
-                         className="absolute top-full left-0 z-30 mt-2 w-full"
+                    {idx===studentIdx && 
+                      <StudentDetail 
+                        studentData={student[idx]} 
+                        setStudentIdx={setStudentIdx} 
                       />
                     }
                   </div>
-                )
+                ) 
               })}
             </div>
 
@@ -204,11 +221,16 @@ function TeacherHome() {
 
   return (
     <>
+      {/* Full window */}
       <div className="min-h-screen bg-slate-50">
-        <div className="border-b border-slate-200 bg-white px-6 py-4">
+        {/* Header part */}
+        <div className="border-b border-slate-200 px-6 py-4 flex justify-between">
           <h1 className="text-xl font-bold text-slate-800">
             Teacher Dashboard
           </h1>
+          <div>
+            <p className='font-semibold text-slate-700'>{teacherData.fullname}</p>
+          </div>
         </div>
 
         {content}
@@ -217,4 +239,4 @@ function TeacherHome() {
   )
 }
 
-export default TeacherHome
+export default TeacherHome          
