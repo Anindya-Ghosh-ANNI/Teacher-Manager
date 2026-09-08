@@ -1,16 +1,55 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import toast from "react-hot-toast"
 
 
 function StudentDetail({studentData, setStudentIdx}) {
-  useEffect(()=>{
-    console.log("Student Detail: ", studentData);
-  }, [])
-
   const API_URL = import.meta.env.VITE_API_URL;
+  const [paidUpto, setPaidUpto] = useState(new Date(studentData.joinDate))
+  const [paymentMonths, setPaymentMonths] = useState(1);
+  const [refresh, setrefresh] = useState(true);
+
+
+  useEffect(()=>{
+    // Student data
+    console.log("Student Detail: ", studentData);
+
+    // Fetching payments of student
+    ;(async ()=> {
+      try {
+        const response = await fetch(`${API_URL}/payment/get/${studentData._id}`);
+        const data = await response.json();
+
+        if(!response){
+          throw new Error("Invalid student id.");
+        }
+
+        console.log("Payment: ", data.data);
+
+        // Set the latest date upto which fees is clear.
+        if(data.data.length){
+          let upto = new Date(studentData.joinDate);
+  
+          data.data.forEach((val, idx)=>{
+            let date = new Date(val.paymentFrom);
+            date.setMonth(date.getMonth() + val.paymentMonths);
+     
+            if(date.getTime() > upto.getTime()){
+              upto = date;
+            }
+          })
+  
+          setPaidUpto(upto);
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })()
+  }, [refresh])
+
 
   const handlePayment = ()=>{
-    async ()=>{
+    ;(async ()=>{
       try {
         const response = await fetch(`${API_URL}/payment/create/${studentData._id}`, {
           method: "POST",
@@ -18,7 +57,7 @@ function StudentDetail({studentData, setStudentIdx}) {
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(payment)
+          body: JSON.stringify({paymentMonths, paymentFrom:paidUpto})
         });
         const data = await response.json();
 
@@ -26,13 +65,14 @@ function StudentDetail({studentData, setStudentIdx}) {
           throw new Error(data.message || "Process failed. Can't register payment.")
         }
 
-        console.log(data);
+        setrefresh((prev)=>!prev)
+        console.log("New payment: ", data);
         toast.success("New payment registered.")
       } 
       catch (error) {
         console.log(error)
       }
-    }
+    })()
   }
 
   return (
@@ -65,7 +105,11 @@ function StudentDetail({studentData, setStudentIdx}) {
             <div className="flex items-center justify-between gap-4">
               <span className="text-sm text-slate-500">Paid upto</span>
               <span className="text-right text-sm font-medium text-slate-800">
-                {/* paid date */}
+                {paidUpto.toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric"
+                })}
               </span>
             </div>
 
@@ -134,12 +178,11 @@ function StudentDetail({studentData, setStudentIdx}) {
 
             <div className="flex items-center gap-3">
               <input
+                value={paymentMonths}
+                onChange={(e)=>setPaymentMonths(e.target.value)}
                 type="number"
                 min="1"
-                defaultValue="1"
-                className="h-11 w-20 rounded-lg border border-slate-300 bg-white
-                          px-2 text-center text-base outline-none
-                          focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                className="h-11 w-20 rounded-lg border border-slate-300 bg-white px-2 text-center text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               />
 
               <span className="text-sm text-slate-600">
@@ -151,9 +194,7 @@ function StudentDetail({studentData, setStudentIdx}) {
           {/* Pay */}
           <button
             onClick={handlePayment}
-            className="mt-4 h-12 w-full rounded-xl bg-blue-600
-                      text-sm font-semibold text-white
-                      transition hover:bg-blue-700 active:scale-[0.98]"
+            className="mt-4 h-12 w-full rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
           >
             Pay Fee
           </button>
