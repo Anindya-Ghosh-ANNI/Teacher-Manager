@@ -41,7 +41,11 @@ router.post("/register", async (req, res, next)=>{
 
         // Login the user
         const token = jwt.sign({teacherId: teacher._id}, process.env.JWT_SECRET);
-        res.cookie("token", token);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+        });
 
         res.status(201).send({
             message: "Backend :: New Teacher created. And login successfull.",
@@ -78,8 +82,13 @@ router.post("/login", async (req, res, next)=>{
 
         // Send jwt token
         const token = jwt.sign({teacherId: teacher._id}, process.env.JWT_SECRET);
-        res.cookie("token", token);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+        });
 
+        // Sending success message
         res.success(teacher, "Teacher logged-in successfully.");
     } 
     catch (error) {
@@ -90,7 +99,11 @@ router.post("/login", async (req, res, next)=>{
 // Logout teacher
 router.post("/logout", async (req, res, next)=>{
     try {
-        res.clearCookie("token");
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+        });
         res.clearCookie("teacherID");
 
         res.status(200).json("Teacher logged-out successfully.");
