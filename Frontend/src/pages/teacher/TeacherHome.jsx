@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import {AddStudentForm, StudentCard, StudentDetail} from "../../index.js"
 
 function TeacherHome() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [student, setStudent] = useState([])
   const [teacherData, setTeacherData] = useState({})
   const [page, setPage] = useState("empty")
   const [error, setError] = useState("")
   const [reload, setReload] = useState(true);
-  const API_URL = import.meta.env.VITE_API_URL;
   const [showstudentForm, setShowStudentForm] = useState(false);
   const [studentIdx, setStudentIdx] = useState("");
 
