@@ -9,12 +9,12 @@ const router = express.Router();
 // Create student
 router.post("/create", authMiddleware, async (req, res, next)=>{
     try {
-        let {name, phone, phone2, subject, active, joinDate, email, password, photo, teacherId, paymentStyle, paymentCount} = req.body;
+        let {name, phone, phone2, subject, active, joinDate, email, password, photo, teacherId, paymentStyle, feeAmount, paymentCount} = req.body;
 
         const token = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
         teacherId = token.teacherId;
 
-        const student = await Student.create({name, phone, phone2, subject, active, joinDate, email, password, photo, teacherId, paymentStyle, paymentCount});
+        const student = await Student.create({name, phone, phone2, subject, active, joinDate, email, password, photo, teacherId, paymentStyle, feeAmount, paymentCount});
         
         res.status(201).json({
             success: true,
