@@ -35,7 +35,6 @@ function AddStudentForm({setShowStudentForm, setReload}) {
       e.preventDefault();
       setError("");
 
-      console.log("heeeee")
       console.log(formData)
 
       const response = await fetch(`${API_URL}/student/create`, {
