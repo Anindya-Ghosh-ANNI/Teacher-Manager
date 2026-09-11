@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import {SubmitBtn} from '../../index.js';
 
 function TeacherRegister() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
+  const [loader, setLoader] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,6 +33,7 @@ function TeacherRegister() {
   // Functions
   const checkEmail = async (e)=>{
     try {
+      setLoader(true);
       setError("");
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -57,11 +60,15 @@ function TeacherRegister() {
       console.log(error.message);
       setError(error.message);
     }
+    finally{
+      setLoader(false);
+    }
   }
 
   const confirmPassword = async (e)=>{
     try {
       setError("")
+      setLoader(true)
       if(formData.password.length<8){
         throw new Error("Password must be of 8 characters.")
       }
@@ -76,6 +83,9 @@ function TeacherRegister() {
     catch (error) {
       setError(error.message);
       console.log(error);
+    }
+    finally{
+      setLoader(false);
     }
   }
 
@@ -104,6 +114,7 @@ function TeacherRegister() {
   const handleSubmit = async (e)=>{
     try {
       e.preventDefault();
+      setLoader(true);
       setError("");
 
       const response = await fetch(`${API_URL}/teacher/register`, {
@@ -129,6 +140,9 @@ function TeacherRegister() {
     catch (error) {
       console.log(error);
       setError(error.message);
+    }
+    finally{
+      setLoader(false);
     }
   }
 
@@ -170,15 +184,11 @@ function TeacherRegister() {
           )}
 
           {/* Verify */}
-          <button
-            type="button"
-            onClick={checkEmail}
-            className="w-full py-3 bg-blue-600 text-white font-medium
-                      rounded-lg hover:bg-blue-700 transition
-                      active:scale-[0.99]"
-          >
-            Verify Email
-          </button>
+          <SubmitBtn title="Verify Email" 
+            type="button" 
+            onClick={checkEmail} 
+            loader={loader}
+          />
 
         </div>
       </>
@@ -229,15 +239,11 @@ function TeacherRegister() {
           )}
 
           {/* Next button */}
-          <button
-            type="button"
-            onClick={confirmPassword}
-            className="w-full py-3 bg-blue-600 text-white font-medium
-                      rounded-lg hover:bg-blue-700 transition
-                      active:scale-[0.99]"
-          >
-            Next
-          </button>
+          <SubmitBtn title="Next" 
+            type="button" 
+            onClick={confirmPassword} 
+            loader={loader}
+          />
 
         </div>
       </>
@@ -410,12 +416,7 @@ function TeacherRegister() {
           )}
 
           {/* Submit */}
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
-          >
-            Register
-          </button>
+          <SubmitBtn title="Register" type="submit" loader={loader} />
 
         </div>
       </>

@@ -1,3 +1,5 @@
+// Teacher Student Button at the landing page 
+
 import { NavLink } from "react-router-dom";
 
 function TSBtn({title, route}){

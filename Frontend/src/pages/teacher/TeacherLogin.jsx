@@ -1,15 +1,18 @@
 import {  useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import {SubmitBtn} from "../../index.js"
 
 function TeacherLogin() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(false);
 
   const handleSubmit = async (e)=>{
     try {
       e.preventDefault();
+      setLoader(true);      
   
       const formData = new FormData(e.target);
   
@@ -40,6 +43,9 @@ function TeacherLogin() {
     catch (error) {
       console.log(error.message);
       setError(error.message);
+    }
+    finally{
+      setLoader(false)
     }
   }
 
@@ -81,11 +87,7 @@ function TeacherLogin() {
 
             <p className="text-red-500 text-sm">{error}</p>
 
-            <button type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-200"
-            >
-              Login
-            </button>
+            <SubmitBtn title="Login" type="submit" loader={loader} />
 
           </form>
         </div>

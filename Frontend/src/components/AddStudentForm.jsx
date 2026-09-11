@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
+import {SubmitBtn} from "../index.js";
 
 function AddStudentForm({setShowStudentForm, setReload}) {
   const API_URL = import.meta.env.VITE_API_URL;
   const [error, setError] = useState("");
   const [availableSubjects, setAvailableSubjects] = useState([])
+  const [loader, setLoader] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     gender: "female",
@@ -33,6 +35,7 @@ function AddStudentForm({setShowStudentForm, setReload}) {
   const handleSubmit = async (e)=>{
     try {
       e.preventDefault();
+      setLoader(true);
       setError("");
 
       console.log(formData)
@@ -60,6 +63,9 @@ function AddStudentForm({setShowStudentForm, setReload}) {
     catch (error) {
       console.log(error.message);
       setError(error.message);
+    }
+    finally{
+      setLoader(false);
     }
   }
 
@@ -296,16 +302,8 @@ function AddStudentForm({setShowStudentForm, setReload}) {
             )}
 
             {/* Submit */}
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold
-                        text-white shadow-sm transition
-                        hover:bg-blue-700
-                        focus:outline-none focus:ring-2 focus:ring-blue-300
-                        active:scale-[0.98]"
-            >
-              Add Student
-            </button>
+            <SubmitBtn title="Add Student" type="submit" loader={loader} />
+        
           </form>
         </div>
       </div>
