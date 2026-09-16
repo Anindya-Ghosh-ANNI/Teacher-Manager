@@ -1,12 +1,15 @@
 import { Route, Routes } from "react-router-dom";
 import {
   Home,
-  Student,
   TeacherLogin,
   TeacherRegister,
   TeacherHome,
   Teacher_LoginOrRegister,
-  AddStudentForm,
+  PaymentPage,
+  StudentLayout,
+  Home_student,
+  Profile_student,
+
 } from "./index";
 
 import UnderConstruction from "./pages/UnderConstruction";
@@ -25,10 +28,13 @@ function App() {
         <Route path="/teacher/register" element={<TeacherRegister />} />
 
         <Route path="/teacher/home" element={<TeacherHome />} />
-
-        <Route path="/test" element={<AddStudentForm />} />
+        <Route path="/teacher/payments" element={<PaymentPage />} />
+        
         {/* Student routes */}
-        {/* <Route path="/student" element={<Student />} /> */}
+        <Route path="/student" element={<StudentLayout />} > 
+          <Route index element={<Home_student />} />
+          <Route path="profile" element={<Profile_student />} />
+        </Route>
 
         {/* All other routes */}
         <Route path="*" element={<UnderConstruction />} />

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import toast from "react-hot-toast"
+import { useNavigate } from 'react-router-dom';
 
 
 function StudentDetail({studentData, setStudentIdx}) {
@@ -7,6 +8,7 @@ function StudentDetail({studentData, setStudentIdx}) {
   const [paidUpto, setPaidUpto] = useState(new Date(studentData.joinDate))
   const [paymentMonths, setPaymentMonths] = useState(1);
   const [refresh, setrefresh] = useState(true);
+  const navigate = useNavigate()
 
 
   useEffect(()=>{
@@ -73,6 +75,15 @@ function StudentDetail({studentData, setStudentIdx}) {
         console.log(error)
       }
     })()
+  }
+
+  const handleClick = ()=>{
+    navigate("/teacher/payments", {
+      state: {
+        studentId: studentData._id,
+        studentName: studentData.name,
+      }
+    });
   }
 
   return (
@@ -197,6 +208,12 @@ function StudentDetail({studentData, setStudentIdx}) {
             className="mt-4 h-12 w-full rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
           >
             Pay Fee
+          </button>
+
+          <button
+            onClick={handleClick}
+          >
+            See payment details
           </button>
 
         </div>
