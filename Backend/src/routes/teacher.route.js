@@ -4,6 +4,9 @@ import bcrypt from "bcrypt"
 import authMiddleware from "../middleware/auth.middleware.js";
 import jwt from "jsonwebtoken";
 import Student from "../models/Student.model.js"
+import nodemailer from "nodemailer";
+import transporter from "../utils/mailer.js";
+import Otp from "../models/Otp.model.js";
 
 const router = express.Router()
 
@@ -224,7 +227,7 @@ router.get("/find/deactive/:teacherId", authMiddleware, async (req, res, next)=>
 })
 
 // Get logged teacher details from jwt
-router.get("/getTeacher", authMiddleware, async (req, res)=>{
+router.get("/getTeacher", authMiddleware, async (req, res, next)=>{
     try {
         const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
         const teacherId = decoded.teacherId;
@@ -247,6 +250,79 @@ router.get("/getAllActive", async (req, res, next)=>{
 
         res.success(teacher);
     } catch (error) {
+        next(error);
+    }
+})
+
+// Send Otp
+router.post("/sendOtp", async (req, res, next)=>{
+    try {
+        const userEmail = req.body.userEmail;
+        const otp = 1000+ Math.floor(Math.random()*9000);
+        const expiresAt = Date.now() + 10*60*1000;
+
+        await Otp.findOneAndUpdate(
+            // Filter by this
+            {email: userEmail},
+            // Update this
+            {otp, expiresAt},
+
+            {new: true, upsert: true}
+        );
+
+        await transporter.sendMail({  
+            // sender address
+            from: process.env.EMAIL_ID, 
+            // list of recipients
+            to: userEmail, 
+            subject: "Your teacher verification OTP :", 
+            html: `
+                <h1>${otp}</h1>
+                <p>Valid for 10 minutes only.</p>
+            `, 
+        });
+
+        res.status(200).json("Email sent and created otp model successfully.");
+    } 
+    catch (error) {
+        next(error)
+    }
+})
+
+router.post("/checkOtp", async (req, res, next)=>{
+    try {
+        const {email, enteredOtp} = req.body;
+
+        const otp = await Otp.findOne({email});
+
+        console.log(otp)
+
+        if(!otp){
+            const error = new Error("Otp not found.");
+            error.stuatusCode = 404;
+            return next(error);
+        }
+
+        if(otp.expiresAt< Date.now()){
+            const error = new Error("OTP has expired.");
+            error.stuatusCode = 400;
+            return next(error);
+        }
+
+        console.log(enteredOtp)
+        console.log(otp)
+
+        if(enteredOtp == otp.otp){
+            await Otp.deleteMany({email});
+            res.status(200).json("OTP matched successfully.")
+        }
+        else{
+            const error = new Error("Incorrect OTP.");
+            error.statusCode = 400;
+            return next(error);
+        }   
+    }
+    catch (error) {
         next(error);
     }
 })

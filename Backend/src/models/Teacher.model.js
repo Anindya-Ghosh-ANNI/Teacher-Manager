@@ -2,21 +2,6 @@ import mongoose from "mongoose";
 
 const teacherSchema = new mongoose.Schema(
     {
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            lowercase: true,
-            trim: true
-        },
-        password: {
-            type: String,
-            required: true
-        },
-        verified: {
-            type: Boolean,
-            default: false,
-        },
         fullname: {
             type: String,
             required: true
@@ -43,7 +28,7 @@ const teacherSchema = new mongoose.Schema(
             required: true,
             unique: true,
             match: /^[0-9]{10}$/
-        }, 
+        },
         totalSubjects: {
             type: Number,
             default: 1,
@@ -66,7 +51,18 @@ const teacherSchema = new mongoose.Schema(
         active: {
             type: Boolean,
             default: true,
-        }
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true
+        },
+        password: {
+            type: String,
+            required: true
+        },
     }, 
     {timestamps: true}
 )

@@ -5,9 +5,10 @@ import {SubmitBtn} from '../../index.js';
 
 function TeacherRegister() {
   const API_URL = import.meta.env.VITE_API_URL;
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState("enterEmail");
   const [error, setError] = useState("");
   const [loader, setLoader] = useState(false)
+  const [enteredOtp, setEnteredOtp] = useState();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,7 +32,7 @@ function TeacherRegister() {
   },[formData.subjects])
 
   // Functions
-  const checkEmail = async (e)=>{
+  const checkEmailAndSendOtp = async ()=>{
     try {
       setLoader(true);
       setError("");
@@ -42,9 +43,7 @@ function TeacherRegister() {
       }
 
       const response = await 
-        fetch(`${API_URL}/teacher/register/verifyEmail?email=${encodeURIComponent(formData.email)}`, 
-        {method: "get"}
-      );
+        fetch(`${API_URL}/teacher/register/verifyEmail?email=${encodeURIComponent(formData.email)}`);
 
       const data = await response.json();
 
@@ -53,9 +52,24 @@ function TeacherRegister() {
       }
 
       console.log(data.message);
+
+      const response2 = await fetch(`${API_URL}/teacher/sendOtp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({userEmail: formData.email})
+      })
+
+      const data2 = await response2.json();
+
+      if(!response2.ok){
+        throw new Error(data2.message || "Can't send otp.")
+      }
+
       setError("");
-      setStep(2);
-    } 
+      setStep("enterOtp");
+    }
     catch (error) {
       console.log(error.message);
       setError(error.message);
@@ -65,7 +79,37 @@ function TeacherRegister() {
     }
   }
 
-  const confirmPassword = async (e)=>{
+  const verifyOtp = async ()=>{
+    try {
+      setLoader(true);
+
+      const response = await fetch(`${API_URL}/teacher/checkOtp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({email: formData.email, enteredOtp: enteredOtp})
+      })
+
+      const data = await response.json();
+
+      if(!response.ok){
+        throw new Error(data.message || "Can't verify your OTP.")
+      }
+
+      setError("");
+      setStep("createPassword");
+    } 
+    catch (error) {
+      console.log(error.message);
+      setError(error.message);
+    }
+    finally{
+      setLoader(false)
+    }
+  }
+
+  const confirmPassword = async ()=>{
     try {
       setError("")
       setLoader(true)
@@ -78,7 +122,7 @@ function TeacherRegister() {
 
       console.log("Password set successfully.");
       setError("")
-      setStep(3);
+      setStep("otherDetails");
     }
     catch (error) {
       setError(error.message);
@@ -148,7 +192,7 @@ function TeacherRegister() {
 
 
   // Conditional Rendering Logic
-  if(step===1){
+  if(step==="enterEmail"){
     content = (
       <>
         <div className="space-y-6">
@@ -171,9 +215,7 @@ function TeacherRegister() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg
-                      outline-none focus:ring-2 focus:ring-blue-500
-                      focus:border-blue-500"
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
 
           {/* Error */}
@@ -186,7 +228,7 @@ function TeacherRegister() {
           {/* Verify */}
           <SubmitBtn title="Verify Email" 
             type="button" 
-            onClick={checkEmail} 
+            onClick={checkEmailAndSendOtp} 
             loader={loader}
           />
 
@@ -194,7 +236,61 @@ function TeacherRegister() {
       </>
     )
   }
-  else if(step===2){
+  else if(step==="enterOtp"){
+    content = (
+      <>
+        <div className="space-y-6">
+
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-800">
+              Verify your email
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Enter the 4-digit OTP sent to your email address.
+            </p>
+          </div>
+
+          <div className="flex justify-center gap-3">
+              <input
+                value={enteredOtp}
+                onChange={(e)=>setEnteredOtp(e.target.value)}
+                type="text"
+                maxLength="4"
+                inputMode="numeric"
+                placeholder='Enter your OTP'
+                className="w-3xl h-14 text-center text-2xl font-semibold border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-500">
+              {error}
+            </p>
+          )}
+
+          <SubmitBtn
+            title="Verify OTP"
+            type="button"
+            onClick={verifyOtp}
+            loader={loader}
+          />
+
+          <p className="text-center text-sm text-slate-500">
+            Didn't receive the OTP?{" "}
+            <button
+              type="button"
+              className="text-blue-600 font-medium hover:underline"
+            >
+              Resend OTP
+            </button>
+          </p>
+
+        </div>
+      </>
+    )
+  }
+  else if(step==="createPassword"){
     content = (
       <>
         <div className="space-y-6">
@@ -249,7 +345,7 @@ function TeacherRegister() {
       </>
     )
   }
-  else if(step===3){
+  else if(step==="otherDetails"){
     content = (
       <>
         <div className="space-y-6">

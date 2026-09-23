@@ -6,7 +6,7 @@ const studentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        gender: {    // *******
+        gender: {    
             type: String,
             enum: ["male", "female", "other"],
             default: "male",
@@ -19,6 +19,7 @@ const studentSchema = new mongoose.Schema(
         phone2: {
             type: Number,   
             required: false,
+            match: /^[0-9]{10}$/
         },
         subject: {
             type: String,
@@ -34,18 +35,6 @@ const studentSchema = new mongoose.Schema(
         joinDate: {
             type: Date,
             default: Date.now   
-        },
-        email: {
-            type: String,
-            lowercase: true,
-            trim: true,
-        },
-        password: {
-            type: String,
-        },
-        verified: {
-            type: Boolean,
-            default: false,
         },
         photo: {
             type: String
@@ -63,6 +52,24 @@ const studentSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Teacher",
             required: true,
+        },
+        email: {
+            type: String,
+            lowercase: true,
+            trim: true,
+        },
+        password: {
+            type: String,
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        otp: {
+            type: Number
+        },
+        expiresAt: {
+            type: Date
         },
     },
     {timestamps: true}
