@@ -32,7 +32,7 @@ function TeacherRegister() {
   },[formData.subjects])
 
   // Functions
-  const checkEmailAndSendOtp = async ()=>{
+  const checkEmailAndSendOtp = async ()=>{  // Now it is only check email then set password
     try {
       setLoader(true);
       setError("");
@@ -53,22 +53,22 @@ function TeacherRegister() {
 
       console.log(data.message);
 
-      const response2 = await fetch(`${API_URL}/teacher/sendOtp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({userEmail: formData.email})
-      })
+      // const response2 = await fetch(`${API_URL}/teacher/sendOtp`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json"
+      //   },
+      //   body: JSON.stringify({userEmail: formData.email})
+      // })
 
-      const data2 = await response2.json();
+      // const data2 = await response2.json();
 
-      if(!response2.ok){
-        throw new Error(data2.message || "Can't send otp.")
-      }
+      // if(!response2.ok){
+      //   throw new Error(data2.message || "Can't send otp.")
+      // }
 
       setError("");
-      setStep("enterOtp");
+      setStep("createPassword");
     }
     catch (error) {
       console.log(error.message);
