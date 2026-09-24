@@ -113,8 +113,8 @@ function TeacherRegister() {
     try {
       setError("")
       setLoader(true)
-      if(formData.password.length<8){
-        throw new Error("Password must be of 8 characters.")
+      if(formData.password.length<4){
+        throw new Error("Password must be of 4 characters.")
       }
       if(pass2!=formData.password){
         throw new Error("Passwords must match eachother.")
