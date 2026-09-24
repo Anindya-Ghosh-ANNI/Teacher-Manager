@@ -114,8 +114,8 @@ function StudentDetail({studentData, setStudentIdx}) {
           <div className="space-y-3">
 
             <div className="flex items-center justify-between gap-4">
-              <span className="text-sm text-slate-500">Paid upto</span>
-              <span className="text-right text-sm font-medium text-slate-800">
+              <span className="text-sm font-bold text-slate-500">Paid upto</span>
+              <span className="text-right text-sm font-bold text-slate-800">
                 {paidUpto.toLocaleDateString("en-IN", {
                   day: "2-digit",
                   month: "short",
@@ -162,7 +162,7 @@ function StudentDetail({studentData, setStudentIdx}) {
             </div>
 
             <div className="flex items-center justify-between gap-4">
-              <span className="text-sm text-slate-500">Fee Amount</span>
+              <span className="text-sm text-slate-500">Fee Amount / month</span>
               <span className="text-right text-base font-bold text-green-600">
                 ₹{studentData.feeAmount}
               </span>
@@ -207,7 +207,7 @@ function StudentDetail({studentData, setStudentIdx}) {
             onClick={handlePayment}
             className="mt-4 h-12 w-full rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
           >
-            Pay Fee
+            {`Pay ₹${paymentMonths*studentData.feeAmount}`}
           </button>
 
           <button

@@ -241,10 +241,10 @@ function AddStudentForm({setShowStudentForm, setReload}) {
               />
             </div>
 
-            {/* Joining Date */}
+            {/* Admission Date */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Admission Date
+                Admission Date (DD-MM-YYYY)
               </label>
               <input
                 type="date"

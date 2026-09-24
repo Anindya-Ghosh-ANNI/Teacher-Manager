@@ -383,7 +383,7 @@ function TeacherRegister() {
             />
 
             <textarea
-              placeholder="Tell students about yourself (Optional)"
+              placeholder="Tell students about yourself (Qualification)"
               name="about"
               value={formData.about}
               onChange={handleChange}

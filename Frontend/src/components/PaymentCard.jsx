@@ -10,7 +10,11 @@ function PaymentCard({paidAmount, paymentDate, paymentFrom, paymentMonths}) {
                 Payment Date
                 </span>
                 <span className="text-gray-800 font-semibold">
-                {paymentDate}
+                {new Date(paymentDate).toLocaleString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                })}
                 </span>
             </div>
 
@@ -37,7 +41,11 @@ function PaymentCard({paidAmount, paymentDate, paymentFrom, paymentMonths}) {
                 Payment From
                 </span>
                 <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                {paymentFrom}
+                {new Date(paymentFrom).toLocaleString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                })}
                 </span>
             </div>
 

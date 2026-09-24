@@ -18,7 +18,7 @@ router.post("/create/:studentId", async (req, res, next)=>{
             return next(error);
         }
 
-        const payment = await Payment.create({studentId, paidAmount: student.feeAmount, paymentFrom, paymentMonths})
+        const payment = await Payment.create({studentId, paidAmount: student.feeAmount*paymentMonths, paymentFrom, paymentMonths})
 
         res.status(201).json({
             success: true,
